@@ -5,14 +5,9 @@ use std::time::SystemTime;
 use store::{CHATS, USERS};
 use uuid::Uuid;
 
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 pub struct AddMessageRequest {
-    #[serde(skip_deserializing)]
     pub chat_id: u128,
-    pub message: String,
-    pub source_user_id: u64,
-    pub destination_user_id: u64,
+    pub message: Message,
 }
 
 impl RequestHandler for AddMessageRequest {
@@ -30,22 +25,8 @@ impl AddMessageRequest {
     fn add_message_if_chat_exists(self) -> Option<Message> {
         CHATS.with(|chats| {
             if let Some(chat) = chats.borrow_mut().get_mut(&self.chat_id) {
-                let current_timestamp =
-                    match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
-                        Ok(dur) => dur.as_millis(),
-                        Err(_) => panic!("SystemTime before UNIX EPOCH!"),
-                    };
-
-                let new_message = Message {
-                    id: Uuid::new_v4().to_string(),
-                    timestamp: current_timestamp,
-                    message: self.message,
-                    source_user_id: self.source_user_id,
-                    destination_user_id: self.destination_user_id,
-                };
-
-                chat.1.push(new_message.clone());
-                return Some(new_message);
+                chat.1.push(self.message.clone());
+                return Some(self.message);
             }
             return None;
         })

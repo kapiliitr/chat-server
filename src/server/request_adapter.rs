@@ -1,3 +1,4 @@
+use models::{Chat, Message};
 use requests;
 use requests::{AddMessageRequest, CreateChatRequest, ListChatsRequest, ListMessagesRequest};
 use std::str::FromStr;
@@ -34,27 +35,27 @@ impl<'a> From<HttpRequest<'a>> for requests::Request {
             "POST" => {
                 let parts: Vec<&str> = req.path.split("/").collect();
                 if parts.len() == 2 && parts[1] == "chats" {
-                    let create_chat_request =
-                        match serde_json::from_str::<CreateChatRequest>(req.body) {
-                            Ok(r) => r,
-                            Err(err) => {
-                                warn!("Error parsing request body {}", err);
-                                return requests::Request::Invalid;
-                            }
-                        };
-                    return requests::Request::CreateChat(create_chat_request);
+                    let new_chat = match serde_json::from_str::<Chat>(req.body) {
+                        Ok(r) => r,
+                        Err(err) => {
+                            warn!("Error parsing request body {}", err);
+                            return requests::Request::Invalid;
+                        }
+                    };
+                    return requests::Request::CreateChat(CreateChatRequest { chat: new_chat });
                 } else if parts.len() == 4 && parts[1] == "chats" && parts[3] == "messages" {
-                    let mut add_message_request =
-                        match serde_json::from_str::<AddMessageRequest>(req.body) {
-                            Ok(r) => r,
-                            Err(err) => {
-                                warn!("Error parsing request body {}", err);
-                                return requests::Request::Invalid;
-                            }
-                        };
+                    let mut new_message = match serde_json::from_str::<Message>(req.body) {
+                        Ok(r) => r,
+                        Err(err) => {
+                            warn!("Error parsing request body {}", err);
+                            return requests::Request::Invalid;
+                        }
+                    };
                     if let Ok(chat_id) = u128::from_str(parts[2]) {
-                        add_message_request.chat_id = chat_id;
-                        return requests::Request::AddMessage(add_message_request);
+                        return requests::Request::AddMessage(AddMessageRequest {
+                            chat_id,
+                            message: new_message,
+                        });
                     } else {
                         return requests::Request::Invalid;
                     }

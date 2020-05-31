@@ -1,6 +1,5 @@
-use serde::Serialize;
-
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Message {
     pub id: String,
     pub timestamp: u128,

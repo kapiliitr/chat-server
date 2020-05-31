@@ -189,6 +189,7 @@ impl Server {
             }
         };
         if let Some(ref response) = conn.pending {
+            debug!("Response {:?}", response);
             if let Err(err) = response
                 .iter()
                 .try_for_each(|line| stream_writer.write(line.as_bytes()).map(|num| ()))
