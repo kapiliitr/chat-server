@@ -5,12 +5,12 @@ use requests;
 use requests::{Request, RequestHandler};
 use serde::Serialize;
 use server::{
-    create_error_response, create_success_response, invalid_response, HttpRequest, Server,
+    create_error_response, create_success_response, invalid_response, HttpRequest,
 };
-use std::io::Read;
+
 use std::net::SocketAddr;
-use std::time::Duration;
-use std::{io, thread};
+
+
 
 pub struct Connection {
     pub socket: TcpStream,

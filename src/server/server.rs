@@ -4,10 +4,10 @@ use models::{ChatError, ChatResult};
 use server::{Connection, ServerConfig};
 use slab::Slab;
 use std::io;
-use std::io::{BufRead, BufReader, BufWriter, Read, Write};
+use std::io::{BufReader, BufWriter, Read, Write};
 use std::net::SocketAddr;
 use utils::ResultExt;
-use {requests, utils};
+use {utils};
 
 const SERVER_TOKEN: usize = 0;
 
@@ -76,7 +76,7 @@ impl Server {
         }
     }
 
-    fn handle_server_event(&mut self, poll: &Poll, event: Event) -> () {
+    fn handle_server_event(&mut self, poll: &Poll, _event: Event) -> () {
         loop {
             match self.socket.accept() {
                 Ok((client_socket, client_address)) => {
@@ -178,7 +178,7 @@ impl Server {
         }
     }
 
-    fn handle_writable_client_event(&mut self, poll: &Poll, key: usize) -> () {
+    fn handle_writable_client_event(&mut self, _poll: &Poll, key: usize) -> () {
         let conn = unsafe { self.connections.get_unchecked_mut(key) };
         debug!("Writing to socket");
         let mut stream_writer = match conn.socket.try_clone() {
@@ -192,7 +192,7 @@ impl Server {
             debug!("Response {:?}", response);
             if let Err(err) = response
                 .iter()
-                .try_for_each(|line| stream_writer.write(line.as_bytes()).map(|num| ()))
+                .try_for_each(|line| stream_writer.write(line.as_bytes()).map(|_num| ()))
             {
                 warn!("Failed to write response to buffer");
                 return self.close_connection_on_error(key, err);

@@ -2,7 +2,7 @@ use models::ChatErrorKind::ChatAlreadyExists;
 use models::{Chat, ChatError, ChatResult};
 use requests::RequestHandler;
 use store::{CHATS, USERS};
-use uuid::Uuid;
+
 
 pub struct CreateChatRequest {
     pub chat: Chat,
@@ -14,7 +14,7 @@ impl RequestHandler for CreateChatRequest {
     fn execute(self) -> ChatResult<Self::Response> {
         match self.get_chat_if_already_exists() {
             None => Ok(self.create_and_get_new_chat()),
-            Some(chat) => Err(ChatError::new(ChatAlreadyExists)),
+            Some(_chat) => Err(ChatError::new(ChatAlreadyExists)),
         }
     }
 }

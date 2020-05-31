@@ -2,7 +2,7 @@ use models::ChatErrorKind::NoChatsFound;
 use models::{Chat, ChatError, ChatResult};
 use requests::RequestHandler;
 use store::{CHATS, USERS};
-use uuid::Uuid;
+
 
 pub struct ListChatsRequest {
     pub user_id: u64,

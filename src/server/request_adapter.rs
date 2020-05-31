@@ -44,7 +44,7 @@ impl<'a> From<HttpRequest<'a>> for requests::Request {
                     };
                     return requests::Request::CreateChat(CreateChatRequest { chat: new_chat });
                 } else if parts.len() == 4 && parts[1] == "chats" && parts[3] == "messages" {
-                    let mut new_message = match serde_json::from_str::<Message>(req.body) {
+                    let new_message = match serde_json::from_str::<Message>(req.body) {
                         Ok(r) => r,
                         Err(err) => {
                             warn!("Error parsing request body {}", err);

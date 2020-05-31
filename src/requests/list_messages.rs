@@ -1,8 +1,8 @@
 use models::ChatErrorKind::ChatDoesNotExist;
 use models::{ChatError, ChatResult, Message};
 use requests::RequestHandler;
-use store::{CHATS, USERS};
-use uuid::Uuid;
+use store::{CHATS};
+
 
 pub struct ListMessagesRequest {
     pub chat_id: u128,
