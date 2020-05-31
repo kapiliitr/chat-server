@@ -14,7 +14,7 @@ impl<'a> From<HttpRequest<'a>> for requests::Request {
     fn from(req: HttpRequest<'a>) -> Self {
         match req.method {
             "GET" => {
-                let parts: Vec<&str> = req.path.split("/").collect();
+                let parts: Vec<&str> = req.path.split('/').collect();
                 if parts.len() == 2 && parts[1].starts_with("chats?userId=") {
                     let user_id_str: String =
                         parts[1].chars().skip("chats?userId=".len()).collect();
@@ -33,7 +33,7 @@ impl<'a> From<HttpRequest<'a>> for requests::Request {
                 requests::Request::Invalid
             }
             "POST" => {
-                let parts: Vec<&str> = req.path.split("/").collect();
+                let parts: Vec<&str> = req.path.split('/').collect();
                 if parts.len() == 2 && parts[1] == "chats" {
                     let new_chat = match serde_json::from_str::<Chat>(req.body) {
                         Ok(r) => r,
@@ -62,7 +62,7 @@ impl<'a> From<HttpRequest<'a>> for requests::Request {
                 }
                 requests::Request::Invalid
             }
-            _ => return requests::Request::Invalid,
+            _ => requests::Request::Invalid,
         }
     }
 }

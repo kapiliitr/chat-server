@@ -11,9 +11,9 @@ pub struct ChatError {
 
 #[derive(Debug, Display)]
 pub enum ChatErrorKind {
-    #[display(fmt = "Failed to initialize server config")]
+    #[display(fmt = "Failed to initialize core config")]
     ConfigInitializationFailed,
-    #[display(fmt = "Failed to parse server address")]
+    #[display(fmt = "Failed to parse core address")]
     ServerAddressParseFailed,
     #[display(fmt = "Failed to perform IO operation")]
     IOOperationFailed,

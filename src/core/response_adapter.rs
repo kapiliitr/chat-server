@@ -13,7 +13,7 @@ where
     let message = serde_json::to_string(&data).unwrap();
     vec![
         format!("HTTP/1.1 {}\r\n", status),
-        format!("Content-Type: application/json\r\n"),
+        "Content-Type: application/json\r\n".to_string(),
         format!("Status: {}\r\n\r\n", status),
         format!("{}\r\n", message),
     ]

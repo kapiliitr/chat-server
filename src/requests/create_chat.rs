@@ -3,7 +3,6 @@ use models::{Chat, ChatError, ChatResult};
 use requests::RequestHandler;
 use store::{CHATS, USERS};
 
-
 pub struct CreateChatRequest {
     pub chat: Chat,
 }
@@ -30,28 +29,27 @@ impl CreateChatRequest {
     }
 
     fn create_and_get_new_chat(&self) -> Chat {
+        CHATS.with(|chats| {
+            chats
+                .borrow_mut()
+                .insert(self.chat.id, (self.chat.clone(), vec![]));
+        });
+
         USERS.with(|users| {
-            CHATS.with(|chats| {
-                let user_id_1 = self.chat.participant_ids[0];
-                let user_id_2 = self.chat.participant_ids[1];
-                chats
-                    .borrow_mut()
-                    .insert(self.chat.id, (self.chat.clone(), vec![]));
-                {
-                    users
-                        .borrow_mut()
-                        .entry(user_id_1)
-                        .and_modify(|user_1_chats| user_1_chats.push(self.chat.id))
-                        .or_insert(vec![self.chat.id]);
-                }
-                {
-                    users
-                        .borrow_mut()
-                        .entry(user_id_2)
-                        .and_modify(|user_2_chats| user_2_chats.push(self.chat.id))
-                        .or_insert(vec![self.chat.id]);
-                }
-            })
+            let user_id_1 = self.chat.participant_ids[0];
+            let user_id_2 = self.chat.participant_ids[1];
+
+            let mut users_mut = users.borrow_mut();
+
+            users_mut
+                .entry(user_id_1)
+                .and_modify(|user_1_chats| user_1_chats.push(self.chat.id))
+                .or_insert_with(|| vec![self.chat.id]);
+
+            users_mut
+                .entry(user_id_2)
+                .and_modify(|user_2_chats| user_2_chats.push(self.chat.id))
+                .or_insert_with(|| vec![self.chat.id]);
         });
 
         self.chat.clone()

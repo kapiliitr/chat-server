@@ -1,16 +1,12 @@
+use core::{create_error_response, create_success_response, invalid_response, HttpRequest};
 use mio::net::TcpStream;
 use mio::Token;
 use models::ChatResult;
 use requests;
 use requests::{Request, RequestHandler};
 use serde::Serialize;
-use server::{
-    create_error_response, create_success_response, invalid_response, HttpRequest,
-};
 
 use std::net::SocketAddr;
-
-
 
 pub struct Connection {
     pub socket: TcpStream,
@@ -20,16 +16,16 @@ pub struct Connection {
 }
 
 impl Connection {
-    pub fn process_request(&mut self, request_string: &String) {
+    pub fn process_request(&mut self, request_string: &str) {
         let request_parts: Vec<&str> = request_string.split("\r\n").collect();
-        let x: Vec<&str> = request_parts[0].split(" ").collect();
+        let x: Vec<&str> = request_parts[0].split(' ').collect();
         let method: &str = x[0];
         let path: &str = x[1];
         let body: &str = request_parts[request_parts.len() - 1];
         let req = HttpRequest { method, path, body };
         debug!("Received request {:?}", req);
 
-        let method = req.method.clone();
+        let method = req.method;
         let chat_request: requests::Request = req.into();
         let response = match chat_request {
             Request::CreateChat(create_chat) => generate_response(method, create_chat.execute()),

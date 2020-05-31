@@ -1,8 +1,7 @@
 use models::ChatErrorKind::ChatDoesNotExist;
 use models::{ChatError, ChatResult, Message};
 use requests::RequestHandler;
-use store::{CHATS};
-
+use store::CHATS;
 
 pub struct ListMessagesRequest {
     pub chat_id: u128,
@@ -25,7 +24,7 @@ impl ListMessagesRequest {
             if let Some(chat) = chats.borrow().get(&self.chat_id) {
                 return Some(chat.1.clone());
             }
-            return None;
+            None
         })
     }
 }

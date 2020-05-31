@@ -3,7 +3,6 @@ use models::{Chat, ChatError, ChatResult};
 use requests::RequestHandler;
 use store::{CHATS, USERS};
 
-
 pub struct ListChatsRequest {
     pub user_id: u64,
 }
@@ -32,7 +31,7 @@ impl ListChatsRequest {
                     }
                     return Some(found_chats);
                 }
-                return None;
+                None
             })
         })
     }

@@ -7,7 +7,6 @@ authors = ["Kapil Agarwal <kapil6442@gmail.com>"]
 [dependencies]
 mio = "0.6.19"
 derive_more = "0.99.2"
-uuid = { version = "0.8.1", features = ["v4"] }
 envconfig = "0.5.1"
 envconfig_derive = "0.5.1"
 log = "0.4.8"

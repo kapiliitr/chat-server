@@ -1,13 +1,13 @@
+use core::{Connection, ServerConfig};
 use mio::net::TcpListener;
 use mio::{Event, Events, Poll, PollOpt, Ready, Token};
 use models::{ChatError, ChatResult};
-use server::{Connection, ServerConfig};
 use slab::Slab;
 use std::io;
 use std::io::{BufReader, BufWriter, Read, Write};
 use std::net::SocketAddr;
+use utils;
 use utils::ResultExt;
-use {utils};
 
 const SERVER_TOKEN: usize = 0;
 
@@ -42,7 +42,7 @@ impl Server {
 
     fn new(config: ServerConfig) -> ChatResult<Self> {
         let conn_string = format!("{}:{}", config.hostname, config.port);
-        info!("Starting server at address {}", conn_string);
+        info!("Starting core at address {}", conn_string);
         conn_string
             .parse::<SocketAddr>()
             .from_err()
@@ -56,7 +56,7 @@ impl Server {
             })
     }
 
-    fn handle_event(&mut self, poll: &Poll, event: Event) -> () {
+    fn handle_event(&mut self, poll: &Poll, event: Event) {
         match event.token() {
             Token(SERVER_TOKEN) => {
                 if self.connections.len() >= self.connections.capacity() {
@@ -76,7 +76,7 @@ impl Server {
         }
     }
 
-    fn handle_server_event(&mut self, poll: &Poll, _event: Event) -> () {
+    fn handle_server_event(&mut self, poll: &Poll, _event: Event) {
         loop {
             match self.socket.accept() {
                 Ok((client_socket, client_address)) => {
@@ -118,7 +118,7 @@ impl Server {
         }
     }
 
-    fn handle_client_event(&mut self, poll: &Poll, event: Event, key: usize) -> () {
+    fn handle_client_event(&mut self, poll: &Poll, event: Event, key: usize) {
         debug!("Client event received {:?}", event);
 
         if event.readiness().is_readable() {
@@ -128,7 +128,7 @@ impl Server {
         }
     }
 
-    fn handle_readable_client_event(&mut self, poll: &Poll, key: usize) -> () {
+    fn handle_readable_client_event(&mut self, poll: &Poll, key: usize) {
         let conn = unsafe { self.connections.get_unchecked_mut(key) };
         let mut stream_reader = match conn.socket.try_clone() {
             Ok(read_stream) => BufReader::new(read_stream),
@@ -178,7 +178,7 @@ impl Server {
         }
     }
 
-    fn handle_writable_client_event(&mut self, _poll: &Poll, key: usize) -> () {
+    fn handle_writable_client_event(&mut self, _poll: &Poll, key: usize) {
         let conn = unsafe { self.connections.get_unchecked_mut(key) };
         debug!("Writing to socket");
         let mut stream_writer = match conn.socket.try_clone() {
