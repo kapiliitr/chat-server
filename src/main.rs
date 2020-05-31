@@ -8,10 +8,10 @@ extern crate envconfig;
 #[macro_use]
 extern crate log;
 extern crate env_logger;
-extern crate httparse;
 extern crate slab;
 #[macro_use]
 extern crate serde;
+extern crate core;
 extern crate serde_json;
 
 use server::{Server, ServerConfig};

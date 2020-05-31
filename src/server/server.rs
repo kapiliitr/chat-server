@@ -140,7 +140,7 @@ impl Server {
         let mut request_string = String::new();
 
         loop {
-            match stream_reader.read_line(&mut request_string) {
+            match stream_reader.read_to_string(&mut request_string) {
                 Ok(0) => {
                     debug!("Read 0 bytes, socket closed");
                     // Socket is closed, remove it from the map
@@ -151,8 +151,8 @@ impl Server {
                     debug!("Read {} bytes, {:?}", size, request_string);
                 }
                 Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
+                    debug!("Request received {}", request_string);
                     debug!("Received WouldBlock");
-
                     {
                         conn.process_request(&request_string);
                     }

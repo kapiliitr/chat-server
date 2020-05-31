@@ -4,6 +4,8 @@ use requests::RequestHandler;
 use store::{CHATS, USERS};
 use uuid::Uuid;
 
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateChatRequest {
     pub participant_ids: Vec<u64>,
 }

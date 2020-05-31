@@ -5,7 +5,10 @@ use std::time::SystemTime;
 use store::{CHATS, USERS};
 use uuid::Uuid;
 
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct AddMessageRequest {
+    #[serde(skip_deserializing)]
     pub chat_id: u128,
     pub message: String,
     pub source_user_id: u64,
