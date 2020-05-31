@@ -17,10 +17,17 @@ pub struct Connection {
 
 impl Connection {
     pub fn process_request(&mut self, request_string: &str) {
+        // HTTP requests have the following format-
+        //     Method Request-URI HTTP-Version CRLF
+        //     headers CRLF
+        //     message-body
+        // We split the request string line by line.
         let request_parts: Vec<&str> = request_string.split("\r\n").collect();
+        // We split the first line by space to extract the HTTP method and path
         let x: Vec<&str> = request_parts[0].split(' ').collect();
         let method: &str = x[0];
         let path: &str = x[1];
+        // The last line of the request is the request body if present, otherwise it will be empty string.
         let body: &str = request_parts[request_parts.len() - 1];
         let req = HttpRequest { method, path, body };
         debug!("Received request {:?}", req);
